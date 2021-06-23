@@ -24,9 +24,42 @@ class OBJ:
         self.vn = []
         self.f = []
 
-        self.mtllib = dict() # materials lib
+        self.mtllib = None # materials lib
         self.mtl = None # materials of object
 
-    def parse_from_file(file):
+    def parse_from_file(self,file):
         with open(file,'r') as f:
-            pass
+            for line in f:
+                line = line.rstrip()
+                if '#' in line:
+                    continue
+                if len(line) < 2:
+                    continue
+
+                header = line.split()[0]
+                if header == 'o':
+                    self.name = line.split()[1]
+                elif header == 'v':
+                    #vertice
+                    x,y,z = map(float,line.split()[1:])
+                    self.v.append((x,y,z))
+                elif header == 'vt':
+                    #texture vertice
+                    x,y = map(float,line.split()[1:])
+                    self.vt.append((x,y))
+                elif header == 'vn':
+                    #vertice normal
+                    x,y,z = map(float,line.split()[1:])
+                    self.vn.append((x,y,z))
+                elif header == 'f':
+                    #face
+                    frags = line.split()[1:]
+                    face = dict()
+                    face['v'] = [int(i.split('/')[0]) for i in frags]
+                    face['t'] = [int(i.split('/')[1]) for i in frags]
+                    face['n'] = [int(i.split('/')[2]) for i in frags]
+                    self.f.append(face)
+    
+    def __str__(self):
+        return f"Object: {self.name}\n v: {self.v}\n vt: {self.vt}\n vn:{self.vn}\n f:{self.f}"
+                
