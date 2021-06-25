@@ -6,7 +6,7 @@ from Window import Window
 if __name__ == '__main__':
     print("Start Running...")
     obj = OBJ()
-    obj.parse_from_file("D:\\ML\\cube.obj")
+    obj.parse_from_file("./cube.obj")
 
     py.init()
     py.display.set_caption("Render")
