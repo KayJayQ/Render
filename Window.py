@@ -20,9 +20,23 @@ class Window:
         self.TitleRect = self.TitleText.get_rect()
         self.TitleRect.center = (self.width//2,15)
 
+    def set_pipeline(self,pipeline):
+        self.pipeline = pipeline
+
+    def rotate_start(self,x,y):
+        self.r_start_x = x
+        self.r_start_y = y
+
+    def rotate_end(self,x,y):
+        self.r_end_x = x
+        self.r_end_y = y
+
+    def rotate_camera(self,camera):
+        camera.rotate((self.r_start_x,self.r_start_y),(self.r_end_x,self.r_end_y))
+
 
     def update(self):
-        pass
+        self.frame_buffer = self.pipeline.frame_buffer
 
     def blitme(self):
         #Refresh page

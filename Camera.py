@@ -1,5 +1,14 @@
 import numpy as np
 
+def get_R(x,y,z):
+    x = x / 180 * np.pi
+    y = y / 180 * np.pi
+    z = z / 180 * np.pi
+    Rx = np.mat([[1,0,0],[0,np.cos(x),-np.sin(x)],[0,np.sin(x),np.cos(x)]])
+    Ry = np.mat([[np.cos(y),0,np.sin(y)],[0,1,0],[-np.sin(y),0,np.cos(y)]])
+    Rz = np.mat([[np.cos(z),-np.sin(z),0],[np.sin(z),np.cos(z),0],[0,0,1]])
+    return Rx*Ry*Rz
+
 class Camera:
     '''
     Camera Class
@@ -11,43 +20,77 @@ class Camera:
         #Resulution
         self.w = 800
         self.h = 600
-        
-        #Rotation of world, all in Deg, right hand axis
-        self.rx = 0
-        self.ry = 0
-        self.rz = 0
 
         #Displacement of world center
-        self.cx = 0
-        self.cy = 0
-        self.cz = 0
+        self.cx = 0.0
+        self.cy = 0.0
+        self.cz = 0.0
 
         #Displacement of camera
-        self.dx = 0
-        self.dy = 0
-        self.dz = 0
+        self.dx = 0.0
+        self.dy = 0.0
+        self.dz = 2.0
 
-    def rotate(self,rel):
-        #max 5
-        rel_x, rel_y = rel
-        if abs(rel_x) > 5:
-            rel_x = max([-5,rel_x])
-            rel_x = min([5,rel_x])
-        if abs(rel_y) > 5:
-            rel_y = max([-5,rel_y])
-            rel_y = min([5,rel_y])
+        #Camera inner paramters
+        self.fx = 80
+        self.fy = 60
+        self.u0 = 0
+        self.v0 = 0
+
+        self.I = np.mat([[self.fx,0,self.u0,0],[0,self.fy,self.v0,0],[0,0,1,0]])
+
+
+        #Origin Matrix
+        self.R = get_R(0,0,0)
+        self.T = np.mat([[0],[0],[2]])
+
+    def rotate(self,init,end):
+        print("Action: Rotating Camera",init,end)
+
+        x0,y0 = init
+        x1,y1 = end
+
+        #Reflect screen axis cood to [-1,1]
+        x0,x1 = map(lambda x:x*2/self.w-1.0,(x0,x1))
+        y0,y1 = map(lambda x:x*2/self.h-1.0,(y0,y1))
+
+        #Convert 2d cood to on sphere 3d cood
+        dist0 = x0**2 + y0**2
+        if dist0 < 1.0:
+            z0 = (1-dist0)**0.5
+        else:
+            x0 = x0 / dist0**0.5
+            y0 = y0 / dist0**0.5
+            z0 = 0.0
+        dist1 = x1**2 + y1**2
+        if dist1 < 1.0:
+            z1 = (1-dist1)**0.5
+        else:
+            x1 = x1 / dist1**0.5
+            y1 = y1 / dist1**0.5
+            z1 = 0.0
         
-        rel_map = lambda x:x*2
+        #Get rotation angel
+        vec0 = np.array([x0,y0,z0])
+        vec1 = np.array([x1,y1,z1])
+        theta = np.arccos(np.dot(vec0,vec1))
+        U = np.cross(vec0,vec1)
+        U_m = np.linalg.norm(U)
+        U = U/U_m
 
+        ux,uy,uz = U
+        cos = np.cos(theta)
+        sin = np.sin(theta)
 
-    def user_parameters(self):
-        #return readable parameters
-        s = f'''
-        Camera Parameters (readable)
-        Resolution: ({self.w},{self.h})
-        Rotation (deg): Rx {self.rx},Ry {self.ry},Rz {self.rz}
-        World Displacement: Dx {self.cx},Dy {self.cy},Dz {self.cz}
-        Camera Displacement: Dx {self.dx},Dy {self.dy},Dz {self.dz}
-        '''
-        return s
-    
+        trans_R = np.mat([[cos+ux**2*(1-cos), ux*uy*(1-cos)-uz*sin, ux*uz*(1-cos)+uy*sin],
+                            [uy*ux*(1-cos)+uz*sin, cos+uy**2*(1-cos), uy*uz*(1-cos)-ux*sin],
+                            [uz*ux*(1-cos)-uy*sin, uz*uy*(1-cos)+ux*sin, cos+uz**2*(1-cos)]])
+        if U_m < 1e-4:  
+            trans_R = np.mat([[1,0,0],[0,1,0],[0,0,1]])
+        
+        #Update current rotation matrix
+        self.R = self.R * trans_R
+
+    def get_I(self):
+        self.I = np.mat([[self.fx,0,self.u0,0],[0,self.fy,self.v0,0],[0,0,1,0]])
+        return self.I
