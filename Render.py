@@ -29,13 +29,17 @@ if __name__ == '__main__':
                 py.quit()
             if event.type == py.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    window.rotate_start(event.pos[0],event.pos[1])
+                    window.rotating = True
+                    window.pos = event.pos
+                if event.button == 2:
+                    window.reset_camera(camera)
+                if event.button > 3:
+                    window.scale_camera(camera,event.button)
             if event.type == py.MOUSEBUTTONUP:
                 if event.button == 1:
-                    window.rotate_end(event.pos[0],event.pos[1])
-                    window.rotate_camera(camera)
+                    window.rotating = False
             if event.type == py.MOUSEMOTION:
-                pass
+                window.rotate_camera(camera,event.rel)
         pipeline.render(camera,obj,dict())
         window.update()
         window.blitme()

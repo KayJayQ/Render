@@ -44,8 +44,10 @@ class Camera:
         self.R = get_R(0,0,0)
         self.T = np.mat([[0],[0],[2]])
 
+    def reset(self):
+        self.R = get_R(0,0,0)
+
     def rotate(self,init,end):
-        print("Action: Rotating Camera",init,end)
 
         x0,y0 = init
         x1,y1 = end
@@ -90,6 +92,14 @@ class Camera:
         
         #Update current rotation matrix
         self.R = self.R * trans_R
+
+    def scale_up(self):
+        self.fx = self.fx//2
+        self.fy = self.fy//2
+
+    def scale_down(self):
+        self.fx = self.fx * 2
+        self.fy = self.fy * 2
 
     def get_I(self):
         self.I = np.mat([[self.fx,0,self.u0,0],[0,self.fy,self.v0,0],[0,0,1,0]])

@@ -20,19 +20,27 @@ class Window:
         self.TitleRect = self.TitleText.get_rect()
         self.TitleRect.center = (self.width//2,15)
 
+        self.rotating = False
+
     def set_pipeline(self,pipeline):
         self.pipeline = pipeline
 
-    def rotate_start(self,x,y):
-        self.r_start_x = x
-        self.r_start_y = y
+    def rotate_camera(self,camera,rel):
+        if not self.rotating:
+            return
+        cur_x,cur_y = self.pos
+        m_x,m_y = rel
+        camera.rotate((cur_x,cur_y),(cur_x + m_x, cur_y + m_y))
+        self.pos = (cur_x + m_x, cur_y + m_y)
 
-    def rotate_end(self,x,y):
-        self.r_end_x = x
-        self.r_end_y = y
+    def reset_camera(self,camera):
+        camera.reset()
 
-    def rotate_camera(self,camera):
-        camera.rotate((self.r_start_x,self.r_start_y),(self.r_end_x,self.r_end_y))
+    def scale_camera(self,camera,direction):
+        if direction == 4:
+            camera.scale_up()
+        if direction == 5:
+            camera.scale_down()
 
 
     def update(self):
