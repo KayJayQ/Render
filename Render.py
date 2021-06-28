@@ -4,7 +4,9 @@ from Window import Window
 from Camera import Camera
 from Pipeline import Pipeline
 
-from pipeline import naive_vertice_shader
+from pipeline import default_vertices_shader
+from pipeline import default_triangle_setup
+from pipeline import default_triangle_traversal
 
 
 if __name__ == '__main__':
@@ -21,7 +23,10 @@ if __name__ == '__main__':
     pipeline = Pipeline("naive")
 
     window.set_pipeline(pipeline)
-    pipeline.vertice_shader = naive_vertice_shader.naive_vertices_shader
+    pipeline.vertice_shader = default_vertices_shader.main
+    pipeline.triangle_setup = default_triangle_setup.main
+    pipeline.triangle_traversal = default_triangle_traversal.main
+
     
     while True:
         for event in py.event.get():
@@ -40,8 +45,8 @@ if __name__ == '__main__':
                     window.rotating = False
             if event.type == py.MOUSEMOTION:
                 window.rotate_camera(camera,event.rel)
-        pipeline.render(camera,obj,dict())
-        window.update()
+        
+        window.update(camera,obj)
         window.blitme()
 
     py.quit()

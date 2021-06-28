@@ -33,7 +33,7 @@ class Camera:
 
         #Camera inner paramters
         self.fx = 80
-        self.fy = 60
+        self.fy = 80
         self.u0 = 0
         self.v0 = 0
 
@@ -46,6 +46,8 @@ class Camera:
 
     def reset(self):
         self.R = get_R(0,0,0)
+        self.fx = 80
+        self.fy = 80
 
     def rotate(self,init,end):
 

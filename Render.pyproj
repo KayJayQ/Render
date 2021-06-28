@@ -30,7 +30,16 @@
     <Compile Include="Object.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="pipeline\naive_vertice_shader.py">
+    <Compile Include="pipeline\default_triangle_setup.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="pipeline\default_triangle_traversal.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="pipeline\default_vertices_shader.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="pipeline\naive_vertices_shader.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="pipeline\__init__.py">

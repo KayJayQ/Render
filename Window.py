@@ -21,6 +21,7 @@ class Window:
         self.TitleRect.center = (self.width//2,15)
 
         self.rotating = False
+        self.update_screen = True
 
     def set_pipeline(self,pipeline):
         self.pipeline = pipeline
@@ -32,19 +33,28 @@ class Window:
         m_x,m_y = rel
         camera.rotate((cur_x,cur_y),(cur_x + m_x, cur_y + m_y))
         self.pos = (cur_x + m_x, cur_y + m_y)
+        self.update_screen = True
+
 
     def reset_camera(self,camera):
         camera.reset()
+        self.update_screen = True
 
     def scale_camera(self,camera,direction):
         if direction == 4:
             camera.scale_up()
         if direction == 5:
             camera.scale_down()
+        self.update_screen = True
 
 
-    def update(self):
+
+    def update(self,camera,obj):
+        if self.update_screen:
+            self.pipeline.render(camera,obj,dict())
+            self.update_screen = False
         self.frame_buffer = self.pipeline.frame_buffer
+        
 
     def blitme(self):
         #Refresh page

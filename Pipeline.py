@@ -1,3 +1,5 @@
+import numpy as np
+
 def placeholder(camera,obj,opt):
     pass
 
@@ -20,9 +22,7 @@ class Pipeline():
         #Step processor(camera, obj) processed result will be stored at origin OBJ object
 
         #Geometry Stage
-        self.vertice_shader = placeholder # convert world coordinates to camera coordinates 
-        self.clipper = placeholder # clip hiden vertices
-        self.mapping = placeholder # camera coordinates to screen coordinates
+        self.vertice_shader = placeholder # convert world coordinates to camera coordinates
 
         #Resterization Stage
         self.triangle_setup = placeholder # calculate edge data of each triangle
@@ -38,9 +38,8 @@ class Pipeline():
         self.frame_buffer = None
 
     def render(self,camera, obj, opt = dict()):
+        opt["frame_buffer"] = np.zeros((camera.w,camera.h,3)).astype(int)
         self.vertice_shader(camera, obj, opt)
-        self.clipper(camera, obj, opt)
-        self.mapping(camera, obj, opt)
         self.triangle_setup(camera, obj, opt)
         self.triangle_traversal(camera, obj, opt)
         self.frag_shader(camera, obj, opt)
@@ -48,5 +47,6 @@ class Pipeline():
         self.depth_test(camera, obj, opt)
         self.blend(camera, obj, opt)
 
+        #print(opt)
         self.frame_buffer = opt["frame_buffer"]
 
