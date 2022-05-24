@@ -11,6 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>Render</Name>
     <RootNamespace>Render</RootNamespace>
+    <InterpreterId>CondaEnv|CondaEnv|18661</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,21 +31,11 @@
     <Compile Include="Object.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="pipeline\default_triangle_setup.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="pipeline\default_triangle_traversal.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="pipeline\default_vertices_shader.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="pipeline\naive_vertices_shader.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="pipeline\lines_shader.py" />
     <Compile Include="pipeline\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="pipeline\vertices_shader.py" />
     <Compile Include="Render.py" />
     <Compile Include="Window.py">
       <SubType>Code</SubType>
@@ -52,6 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="pipeline\" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="CondaEnv|CondaEnv|18661" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

@@ -13,6 +13,8 @@ class Camera:
     '''
     Camera Class
     '''
+    buffer_weight = 200
+    buffer_height = 200
 
     def __init__(self, name):
         self.name = name
@@ -42,12 +44,22 @@ class Camera:
 
         #Origin Matrix
         self.R = get_R(0,0,0)
-        self.T = np.mat([[0],[0],[2]])
+        self.T = np.mat([[0.0],[0.0],[2.0]])
+
+    def set_resolution(self, w, h):
+        self.w = w + Camera.buffer_weight
+        self.h = h + Camera.buffer_height
 
     def reset(self):
         self.R = get_R(0,0,0)
+        self.T = np.mat([[0.],[0.],[2.]])
         self.fx = 80
         self.fy = 80
+
+    def move(self, x, y, z):
+        factor = (-1/self.fx)*10
+        T = np.mat([[x*factor], [y*factor], [z*factor]]).astype(np.float)
+        self.T += T
 
     def rotate(self,init,end):
 
@@ -98,11 +110,9 @@ class Camera:
     def scale_up(self):
         self.fx = self.fx//2
         self.fy = self.fy//2
+        self.I = np.mat([[self.fx,0,self.u0,0],[0,self.fy,self.v0,0],[0,0,1,0]])
 
     def scale_down(self):
         self.fx = self.fx * 2
         self.fy = self.fy * 2
-
-    def get_I(self):
         self.I = np.mat([[self.fx,0,self.u0,0],[0,self.fy,self.v0,0],[0,0,1,0]])
-        return self.I

@@ -4,10 +4,6 @@ from Window import Window
 from Camera import Camera
 from Pipeline import Pipeline
 
-from pipeline import default_vertices_shader
-from pipeline import default_triangle_setup
-from pipeline import default_triangle_traversal
-
 
 if __name__ == '__main__':
     print("Start Running...")
@@ -16,19 +12,22 @@ if __name__ == '__main__':
 
     py.init()
     py.display.set_caption("Render")
-    screen = py.display.set_mode((800,600))
+    screen = py.display.set_mode((800,600), py.RESIZABLE)
     window = Window((800,600),screen,obj.name)
 
     camera = Camera("default camera")
-    pipeline = Pipeline("naive")
+    camera.set_resolution(800,600)
+    pipeline = Pipeline("alpha")
 
     window.set_pipeline(pipeline)
-    pipeline.vertice_shader = default_vertices_shader.main
-    pipeline.triangle_setup = default_triangle_setup.main
-    pipeline.triangle_traversal = default_triangle_traversal.main
 
+    refresh = False
+    window.update(camera,obj)
+    window.blitme()
     
     while True:
+
+        refresh = False
         for event in py.event.get():
             if event.type == py.QUIT:
                 py.quit()
@@ -40,14 +39,34 @@ if __name__ == '__main__':
                     window.reset_camera(camera)
                 if event.button > 3:
                     window.scale_camera(camera,event.button)
+                refresh = True
             if event.type == py.MOUSEBUTTONUP:
                 if event.button == 1:
                     window.rotating = False
             if event.type == py.MOUSEMOTION:
                 window.rotate_camera(camera,event.rel)
+                if window.rotating:
+                    refresh = True
+            if event.type == py.KEYDOWN:
+                if event.key == py.K_w:
+                    window.move(camera, [1,0,0])
+                if event.key == py.K_s:
+                    window.move(camera, [-1,0,0])
+                if event.key == py.K_a:
+                    window.move(camera, [0,1,0])
+                if event.key == py.K_d:
+                    window.move(camera, [0,-1,0])
+                if event.key == py.K_f:
+                    window.move(camera, [0,0,1])
+                if event.key == py.K_r:
+                    window.move(camera, [0,0,-1])
+                refresh = True
         
-        window.update(camera,obj)
-        window.blitme()
+        if refresh:
+            w, h = py.display.get_surface().get_size()
+            camera.set_resolution(w, h)
+            window.update(camera,obj)
+            window.blitme()
 
     py.quit()
     quit(0)
