@@ -31,9 +31,9 @@ class LineFrag:
             self.start = end
             self.end = start
             
-        self.restorization()
+        self.rasterization()
 
-    def restorization(self):
+    def rasterization(self):
         x0,y0,z0 = self.start
         x1,y1,z1 = self.end
         x0 = int(x0[0,0])

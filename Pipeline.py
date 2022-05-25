@@ -2,6 +2,7 @@ import numpy as np
 
 from pipeline import vertices_shader
 from pipeline import lines_shader
+from pipeline import triangle_shader
 
 def placeholder(camera,obj,opt):
     pass
@@ -25,6 +26,7 @@ class Pipeline():
         #Step processor(camera, obj) processed result will be stored at origin OBJ object
 
         self.components = [vertices_shader.main,
+                           triangle_shader.main,
                            lines_shader.main]
 
         #final frame buffer

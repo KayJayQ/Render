@@ -1,3 +1,6 @@
+import numpy as np
+from matplotlib import pyplot as plt
+
 class OBJ:
     '''
         Object files
@@ -26,6 +29,14 @@ class OBJ:
 
         self.mtllib = None # materials lib
         self.mtl = None # materials of object
+
+        # since ray tracing is not implemented,
+        # use texture file directly
+        self.texture = None
+
+    def load_texture(self, path):
+        self.texture = plt.imread(path)
+        assert len(self.texture.shape) == 3 and self.texture.shape[2] in [3,4], "Texture format error"
 
     def parse_from_file(self,file):
         with open(file,'r') as f:

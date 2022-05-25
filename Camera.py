@@ -67,8 +67,8 @@ class Camera:
         x1,y1 = end
 
         #Reflect screen axis cood to [-1,1]
-        x0,x1 = map(lambda x:x*2/self.w-1.0,(x0,x1))
-        y0,y1 = map(lambda x:x*2/self.h-1.0,(y0,y1))
+        x1,x0 = map(lambda x:x*2/self.w-1.0,(x0,x1))
+        y1,y0 = map(lambda x:x*2/self.h-1.0,(y0,y1))
 
         #Convert 2d cood to on sphere 3d cood
         dist0 = x0**2 + y0**2

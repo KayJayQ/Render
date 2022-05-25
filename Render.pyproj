@@ -32,6 +32,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="pipeline\lines_shader.py" />
+    <Compile Include="pipeline\triangle_shader.py" />
     <Compile Include="pipeline\__init__.py">
       <SubType>Code</SubType>
     </Compile>

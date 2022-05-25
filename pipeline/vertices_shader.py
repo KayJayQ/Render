@@ -15,6 +15,8 @@ def main(camera,obj,opt):
     pts = np.array(obj.v).T
     pts = np.vstack([pts, np.ones((pts.shape[1]))])
     vertices = T @ pts
+    opt["vertex_camera_coods"] = vertices[:-1]
+
     vertices = camera.I @ vertices
     depth = vertices[2]
     vertices = vertices/depth
