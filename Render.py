@@ -8,8 +8,8 @@ from Pipeline import Pipeline
 if __name__ == '__main__':
     print("Start Running...")
     obj = OBJ()
-    obj.parse_from_file("./cube.obj")
-    obj.load_texture("sample.png")
+    obj.parse_from_file("./cube_sample/cube.obj")
+    obj.load_texture("./cube_sample/sample.png")
 
     py.init()
     py.display.set_caption("Render")

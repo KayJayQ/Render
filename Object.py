@@ -67,7 +67,10 @@ class OBJ:
                     frags = line.split()[1:]
                     face = dict()
                     face['v'] = [int(i.split('/')[0]) for i in frags]
-                    face['t'] = [int(i.split('/')[1]) for i in frags]
+                    try:
+                        face['t'] = [int(i.split('/')[1]) for i in frags]
+                    except:
+                        pass
                     face['n'] = [int(i.split('/')[2]) for i in frags]
                     self.f.append(face)
     

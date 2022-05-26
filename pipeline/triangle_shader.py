@@ -3,7 +3,10 @@
     Test normal of frags and restorize valid frags.
 '''
 
+from ctypes.wintypes import HACCEL
+from faulthandler import cancel_dump_traceback_later
 from re import I, T
+from tkinter import W
 from tkinter.font import NORMAL
 import numpy as np
 
@@ -20,14 +23,24 @@ class Frag:
     def __init__(self, vertices, textures):
         self.p = np.array(vertices)
         self.uv = np.array(textures)
-        depth = self.p[:,-1]
-        #self.uv = (self.uv.T / depth).T
+
+    def limit(self, n, floor, ceil):
+        if n >= floor and n <= ceil:
+            return n
+        if n > ceil:
+            return ceil
+        return floor
 
     def rasterization(self):
         x_min = int(self.p[:,0].min())
         x_max = int(self.p[:,0].max())
         y_min = int(self.p[:,1].min())
         y_max = int(self.p[:,1].max())
+
+        x_min = self.limit(x_min, 0, W-1)
+        x_max = self.limit(x_max, 0, W-1)
+        y_min = self.limit(y_min, 0, H-1)
+        y_max = self.limit(y_max, 0, H-1)
 
         P = np.mgrid[x_min:x_max, y_min:y_max].T.reshape((-1,2))
 
@@ -60,13 +73,19 @@ class Frag:
         a = 1 - b - c
 
         depth = self.p[:,-1]
+        d0, d1, d2 = depth
         self.depths = a * depth[0] + b * depth[1] + c * depth[2]
-        uv0 = a * self.uv[0,0] + b * self.uv[1,0] + c * self.uv[2,0]
-        uv1 = a * self.uv[0,1] + b * self.uv[1,1] + c * self.uv[2,1]
-        self.uvs = np.vstack([uv0,uv1]).T
-               
+        uv0 = a * self.uv[0,0] / d0 + b * self.uv[1,0] / d1 + c * self.uv[2,0] / d2
+        uv1 = a * self.uv[0,1] / d0 + b * self.uv[1,1] / d1 + c * self.uv[2,1] / d2
+        duv = a / d0 + b / d1 + c / d2
 
-        
+        self.uvs = np.vstack([uv0/duv,uv1/duv]).T
+               
+# simple depth pre test
+def test_depths(vertices):
+    depths = vertices[:,-1]
+    d0,d1,d2 = depths
+    return d0 > 0 or d1 > 0 or d2 > 0
 
 def test_normal(normals):
     n0, n1, n2 = normals
@@ -83,12 +102,18 @@ def main(camera,obj,opt):
     global T
     R = camera.R
     T = camera.T
+    global W
+    global H 
+    W = camera.w 
+    H = camera.h 
 
     frags = []
 
     for face in obj.f:
         v = np.array(face['v']) - 1
         v = opt['vertex_screen_coods'][:,v]
+        if not test_depths(v.T):
+            continue
         uv = np.array(face['t']) - 1
         uv = textures[:,uv]
         n = np.array(face['n']) - 1
@@ -98,6 +123,8 @@ def main(camera,obj,opt):
             frag = Frag(v.T, uv.T)
             frag.rasterization()
             frags.append(frag)
+
+    opt['frag_setups'] = frags
     
     if debug:
         count = 0
@@ -111,7 +138,11 @@ def main(camera,obj,opt):
                 uvy = (uvy * h).astype(int)
                 uvx[uvx >= w] = w - 1
                 uvy[uvy >= h] = h - 1
+                uvx[uvx < -w] = -w
+                uvy[uvy < -h] = -h
                 colormap = (obj.texture[uvy, uvx, :-1] * 255).astype(int)
+                x[x >= camera.w] = camera.w - 1
+                y[y >= camera.h] = camera.h - 1
                 opt["frame_buffer"][x, y] = colormap
         print(count, "frags were rendered")
 

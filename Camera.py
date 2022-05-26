@@ -44,7 +44,7 @@ class Camera:
 
         #Origin Matrix
         self.R = get_R(0,0,0)
-        self.T = np.mat([[0.0],[0.0],[2.0]])
+        self.T = np.mat([[0.0],[0.0],[10.0]])
 
     def set_resolution(self, w, h):
         self.w = w + Camera.buffer_weight
@@ -52,7 +52,7 @@ class Camera:
 
     def reset(self):
         self.R = get_R(0,0,0)
-        self.T = np.mat([[0.],[0.],[2.]])
+        self.T = np.mat([[0.],[0.],[10.]])
         self.fx = 80
         self.fy = 80
 

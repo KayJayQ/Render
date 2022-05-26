@@ -19,7 +19,7 @@ def main(camera,obj,opt):
 
     vertices = camera.I @ vertices
     depth = vertices[2]
-    vertices = vertices/depth
+    vertices = vertices/(depth - 1e-5)
     vertices[2] = depth
     vertices += np.mat([camera.w/2, camera.h/2, 0]).T
     
