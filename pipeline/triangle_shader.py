@@ -3,11 +3,6 @@
     Test normal of frags and restorize valid frags.
 '''
 
-from ctypes.wintypes import HACCEL
-from faulthandler import cancel_dump_traceback_later
-from re import I, T
-from tkinter import W
-from tkinter.font import NORMAL
 import numpy as np
 
 debug = True
